@@ -8,8 +8,8 @@ import javax.inject.Inject;
 import net.runelite.api.Item;
 import net.runelite.api.ItemComposition;
 import net.runelite.client.game.ItemManager;
+import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPanel;
-import net.runelite.client.ui.overlay.OverlayPriority;
 import net.runelite.client.ui.overlay.components.LineComponent;
 
 public class WeightCalcOverlayPanel extends OverlayPanel
@@ -27,7 +27,7 @@ public class WeightCalcOverlayPanel extends OverlayPanel
 		super(plugin);
 		this.plugin = plugin;
 		this.config = config;
-		setPriority(OverlayPriority.LOW);
+		setLayer(OverlayLayer.ALWAYS_ON_TOP);
 	}
 
 	@Override
