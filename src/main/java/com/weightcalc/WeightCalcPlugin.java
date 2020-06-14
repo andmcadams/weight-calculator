@@ -13,6 +13,7 @@ import net.runelite.api.ItemContainer;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
@@ -38,19 +39,22 @@ public class WeightCalcPlugin extends Plugin
 	@Inject
 	private Client client;
 
+	@Inject
+	private WeightCalcConfig config;
+
 	static final String CONFIG_GROUP_KEY = "weightcalc";
 
 	// Constants for weighing items IDs and weights.
-	public static final int ROCK_ID = 1480;
-	public static final int BRASS_KEY_ID = 983;
-	public static final int GROUND_BAT_BONES_ID = 2391;
-	public static final int GNOMEBALL_ID = 751;
-	public static final int COINS_ID = 995;
+	public static int THOUSANDTH_KG_ID;
+	public static int HUNDREDTH_KG_ID;
+	public static int TENTH_KG_ID;
+	public static int HALF_KG_ID;
+	public static int COINS_ID = 995;
 
-	public static final BigDecimal ROCK_WEIGHT = new BigDecimal("0.001");
-	public static final BigDecimal BRASS_KEY_WEIGHT = new BigDecimal("0.010");
-	public static final BigDecimal GROUND_BAT_BONES_WEIGHT = new BigDecimal("0.100");
-	public static final BigDecimal GNOMEBALL_WEIGHT = new BigDecimal("0.500");
+	public static final BigDecimal THOUSANDTH_KG_WEIGHT = new BigDecimal("0.001");
+	public static final BigDecimal HUNDREDTH_KG_WEIGHT = new BigDecimal("0.010");
+	public static final BigDecimal TENTH_KG_WEIGHT = new BigDecimal("0.100");
+	public static final BigDecimal HALF_KG_WEIGHT = new BigDecimal("0.500");
 
 	// Constants for determining the player state
 	public static final int STATE_EQUIPPED = 0;
@@ -101,6 +105,10 @@ public class WeightCalcPlugin extends Plugin
 	{
 		overlayManager.add(widgetItemOverlay);
 		overlayManager.add(overlayPanel);
+		THOUSANDTH_KG_ID = config.thousandthKgConfig().getId();
+		HUNDREDTH_KG_ID = config.hundredthKgConfig().getId();
+		TENTH_KG_ID = config.tenthKgConfig().getId();
+		HALF_KG_ID = config.halfKgConfig().getId();
 	}
 
 	@Override
@@ -108,6 +116,27 @@ public class WeightCalcPlugin extends Plugin
 	{
 		overlayManager.remove(widgetItemOverlay);
 		overlayManager.remove(overlayPanel);
+	}
+
+	@Subscribe
+	public void onConfigChanged(ConfigChanged event)
+	{
+		switch (event.getKey())
+		{
+			case WeightCalcConfig.HALF_KG_KEYNAME:
+				HALF_KG_ID = config.halfKgConfig().getId();
+				break;
+			case WeightCalcConfig.TENTH_KG_KEYNAME:
+				TENTH_KG_ID = config.tenthKgConfig().getId();
+				break;
+			case WeightCalcConfig.HUNDREDTH_KG_KEYNAME:
+				HUNDREDTH_KG_ID = config.hundredthKgConfig().getId();
+				break;
+			case WeightCalcConfig.THOUSANDTH_KG_KEYNAME:
+				THOUSANDTH_KG_ID = config.thousandthKgConfig().getId();
+			default:
+				break;
+		}
 	}
 
 	@Subscribe
@@ -176,7 +205,7 @@ public class WeightCalcPlugin extends Plugin
 			{
 				if (minWeight.compareTo(extraWeight) <= 0)
 				{
-					minWeight = extraWeight.add(ROCK_WEIGHT);
+					minWeight = extraWeight.add(THOUSANDTH_KG_WEIGHT);
 				}
 			}
 			else if (currentWeight >= aloneWeight + 1)
@@ -203,10 +232,10 @@ public class WeightCalcPlugin extends Plugin
 	private BigDecimal getExtraWeight()
 	{
 		BigDecimal extraWeight = BigDecimal.ZERO;
-		extraWeight = extraWeight.add(ROCK_WEIGHT.multiply(new BigDecimal(itemCounts[0])));
-		extraWeight = extraWeight.add(BRASS_KEY_WEIGHT.multiply(new BigDecimal(itemCounts[1])));
-		extraWeight = extraWeight.add(GROUND_BAT_BONES_WEIGHT.multiply(new BigDecimal(itemCounts[2])));
-		extraWeight = extraWeight.add(GNOMEBALL_WEIGHT.multiply(new BigDecimal(itemCounts[3])));
+		extraWeight = extraWeight.add(THOUSANDTH_KG_WEIGHT.multiply(new BigDecimal(itemCounts[0])));
+		extraWeight = extraWeight.add(HUNDREDTH_KG_WEIGHT.multiply(new BigDecimal(itemCounts[1])));
+		extraWeight = extraWeight.add(TENTH_KG_WEIGHT.multiply(new BigDecimal(itemCounts[2])));
+		extraWeight = extraWeight.add(HALF_KG_WEIGHT.multiply(new BigDecimal(itemCounts[3])));
 
 		return extraWeight;
 	}
@@ -252,32 +281,35 @@ public class WeightCalcPlugin extends Plugin
 				{
 					// Determine how many of each weighing object the player has in their inventory.
 					// Note that the -1 case is to ignore items removed from the inventory.
-					switch (item.getId())
+					int id = item.getId();
+					if (id == THOUSANDTH_KG_ID)
 					{
-						case ROCK_ID:
-							itemCounts[0] += 1;
-							break;
-						case BRASS_KEY_ID:
-							itemCounts[1] += 1;
-							break;
-						case GROUND_BAT_BONES_ID:
-							itemCounts[2] += 1;
-							break;
-						case GNOMEBALL_ID:
-							itemCounts[3] += 1;
-							break;
-						case -1:
-							break;
-						default:
-							if (item.getId() != COINS_ID)
-							{
-								nonWeighingItemCount++;
-							}
-							if (currentItem != null && item.getId() == currentItem.getId())
-							{
-								itemWeighedInInventory = true;
-							}
-							break;
+						itemCounts[0] += 1;
+					}
+					else if (id == HUNDREDTH_KG_ID)
+					{
+						itemCounts[1] += 1;
+					}
+					else if (id == TENTH_KG_ID)
+					{
+						itemCounts[2] += 1;
+					}
+					else if (id == HALF_KG_ID)
+					{
+						itemCounts[3] += 1;
+					}
+					else if (id == -1)
+					{
+						continue;
+					}
+					else if (item.getId() != COINS_ID)
+					{
+						nonWeighingItemCount++;
+					}
+
+					if (currentItem != null && item.getId() == currentItem.getId())
+					{
+						itemWeighedInInventory = true;
 					}
 				}
 				if (!itemWeighedInInventory)
@@ -351,40 +383,40 @@ public class WeightCalcPlugin extends Plugin
 		// This could almost certainly be condensed using a new class and array.
 		if (currentWeight.compareTo(minWeight) <= 0)
 		{
-			if (range.compareTo(GNOMEBALL_WEIGHT) > 0 && remainingGnomeballs > 0)
+			if (range.compareTo(HALF_KG_WEIGHT) > 0 && remainingGnomeballs > 0)
 			{
-				return new WeightCalcMessage(GNOMEBALL_ID, true);
+				return new WeightCalcMessage(HALF_KG_ID, true);
 			}
-			else if (range.compareTo(GROUND_BAT_BONES_WEIGHT) > 0 && remainingGroundBones > 0)
+			else if (range.compareTo(TENTH_KG_WEIGHT) > 0 && remainingGroundBones > 0)
 			{
-				return new WeightCalcMessage(GROUND_BAT_BONES_ID, true);
+				return new WeightCalcMessage(TENTH_KG_ID, true);
 			}
-			else if (range.compareTo(BRASS_KEY_WEIGHT) > 0 && remainingKeys > 0)
+			else if (range.compareTo(HUNDREDTH_KG_WEIGHT) > 0 && remainingKeys > 0)
 			{
-				return new WeightCalcMessage(BRASS_KEY_ID, true);
+				return new WeightCalcMessage(HUNDREDTH_KG_ID, true);
 			}
-			else if (range.compareTo(ROCK_WEIGHT) >= 0 && remainingRocks > 0)
+			else if (range.compareTo(THOUSANDTH_KG_WEIGHT) >= 0 && remainingRocks > 0)
 			{
-				return new WeightCalcMessage(ROCK_ID, true);
+				return new WeightCalcMessage(THOUSANDTH_KG_ID, true);
 			}
 		}
 		else
 		{
 			if (remainingRocks < totalRocks)
 			{
-				return new WeightCalcMessage(ROCK_ID, false);
+				return new WeightCalcMessage(THOUSANDTH_KG_ID, false);
 			}
 			else if (remainingKeys < totalKeys)
 			{
-				return new WeightCalcMessage(BRASS_KEY_ID, false);
+				return new WeightCalcMessage(HUNDREDTH_KG_ID, false);
 			}
 			else if (remainingGroundBones < totalBones)
 			{
-				return new WeightCalcMessage(GROUND_BAT_BONES_ID, false);
+				return new WeightCalcMessage(TENTH_KG_ID, false);
 			}
 			else if (remainingGnomeballs < totalBalls)
 			{
-				return new WeightCalcMessage(GNOMEBALL_ID, false);
+				return new WeightCalcMessage(HALF_KG_ID, false);
 			}
 		}
 		return null;
