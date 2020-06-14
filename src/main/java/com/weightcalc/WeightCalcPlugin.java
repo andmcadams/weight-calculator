@@ -45,6 +45,7 @@ public class WeightCalcPlugin extends Plugin
 	public static final int BRASS_KEY_ID = 983;
 	public static final int GROUND_BAT_BONES_ID = 2391;
 	public static final int GNOMEBALL_ID = 751;
+	public static final int COINS_ID = 995;
 
 	public static final BigDecimal ROCK_WEIGHT = new BigDecimal("0.001");
 	public static final BigDecimal BRASS_KEY_WEIGHT = new BigDecimal("0.010");
@@ -268,7 +269,10 @@ public class WeightCalcPlugin extends Plugin
 						case -1:
 							break;
 						default:
-							nonWeighingItemCount++;
+							if (item.getId() != COINS_ID)
+							{
+								nonWeighingItemCount++;
+							}
 							if (currentItem != null && item.getId() == currentItem.getId())
 							{
 								itemWeighedInInventory = true;
@@ -301,7 +305,7 @@ public class WeightCalcPlugin extends Plugin
 		int size = 0;
 		for (Item item : items)
 		{
-			if (item.getId() != -1)
+			if (item.getId() != -1 && item.getId() != COINS_ID)
 			{
 				size += 1;
 			}
@@ -310,13 +314,13 @@ public class WeightCalcPlugin extends Plugin
 	}
 
 	// Expects an array of Item objects such that realSize(items) == 1
-	// Returns the first item object with an id other than -1 in the array of items.
-	// If items has no objects with an id other than -1, the first object in items is returned.
+	// Returns the first item object with an id other than -1 or COINS_ID in the array of items.
+	// If items has no objects with an id other than -1 or COINS_ID, the first object in items is returned.
 	private Item getItemToWeigh(Item[] items)
 	{
 		for (Item item : items)
 		{
-			if (item.getId() != -1)
+			if (item.getId() != -1 && item.getId() != COINS_ID)
 			{
 				return item;
 			}
