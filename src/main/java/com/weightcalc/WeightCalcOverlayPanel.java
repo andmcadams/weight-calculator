@@ -33,11 +33,12 @@ public class WeightCalcOverlayPanel extends OverlayPanel
 	@Override
 	public Dimension render(Graphics2D graphics)
 	{
-
 		BigDecimal minWeight = WeightCalcPlugin.getMinWeight().setScale(3, RoundingMode.HALF_UP);
 		BigDecimal maxWeight = WeightCalcPlugin.getMaxWeight().setScale(3, RoundingMode.HALF_UP);
 		BigDecimal aloneWeight = WeightCalcPlugin.getAloneWeightBD();
 		int state = plugin.getState();
+
+		panelComponent.getChildren().clear();
 
 		if (state == WeightCalcPlugin.STATE_EQUIPPED)
 		{
