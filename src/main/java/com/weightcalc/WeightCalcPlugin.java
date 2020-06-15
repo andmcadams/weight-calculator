@@ -142,7 +142,7 @@ public class WeightCalcPlugin extends Plugin
 	@Subscribe
 	public void onItemContainerChanged(ItemContainerChanged event)
 	{
-		if (InventoryID.INVENTORY.getId() != event.getContainerId())
+		if (InventoryID.INVENTORY.getId() != event.getContainerId() && InventoryID.EQUIPMENT.getId() != event.getContainerId())
 		{
 			return;
 		}
