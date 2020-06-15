@@ -73,10 +73,10 @@ public class WeightCalcOverlayPanel extends OverlayPanel
 				panelComponent.getChildren().add(LineComponent.builder().left("Final weight: " + (BigDecimal.ONE.subtract(maxWeight).add(aloneWeight).toString())).build());
 			}
 			// Might want to add this as a toggle for debugging.
-			// else
-			// {
-			// 	panelComponent.getChildren().add(LineComponent.builder().left("Added weights to try: " + minWeight.toString() + " - " + maxWeight.toString()).build());
-			// }
+			else if (config.showWeightsRange())
+			{
+				panelComponent.getChildren().add(LineComponent.builder().left("Possible weights: " + (BigDecimal.ONE.subtract(maxWeight).add(aloneWeight)) + " - " + (BigDecimal.ONE.subtract(minWeight).add(aloneWeight))).build());
+			}
 		}
 
 
