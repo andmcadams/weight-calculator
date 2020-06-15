@@ -2,6 +2,7 @@ package com.weightcalc;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.runelite.api.Item;
 import net.runelite.api.ItemID;
 
 public class WeightCalcEnum
@@ -61,7 +62,8 @@ public class WeightCalcEnum
 	public enum ThousandthKg implements WeighingItem
 	{
 		ROCK(ItemID.ROCK_1480),
-		AL_KHARID_FLYER(ItemID.AL_KHARID_FLYER);
+		AL_KHARID_FLYER(ItemID.AL_KHARID_FLYER),
+		OAK_ROOTS(ItemID.OAK_ROOTS);
 
 		@Getter
 		@Setter

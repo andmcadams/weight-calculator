@@ -33,6 +33,6 @@ public interface WeightCalcConfig extends Config
 	@ConfigItem(keyName = THOUSANDTH_KG_KEYNAME, name = "0.001 kg", description = "Weighing item to use for 0.001 kg")
 	default WeightCalcEnum.ThousandthKg thousandthKgConfig()
 	{
-		return WeightCalcEnum.ThousandthKg.AL_KHARID_FLYER;
+		return WeightCalcEnum.ThousandthKg.OAK_ROOTS;
 	}
 }
