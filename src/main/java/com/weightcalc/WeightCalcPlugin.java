@@ -160,20 +160,21 @@ public class WeightCalcPlugin extends Plugin
 		if (state == STATE_UNKNOWN)
 		{
 			log.debug("STATE UNKNOWN");
-			return;
 		}
-		if (state == STATE_EQUIPPED)
+
+		else if (state == STATE_EQUIPPED)
 		{
 			log.debug("STATE_EQUIPPED");
-			return;
+			wm = null;
 		}
 
-		if (state == STATE_TOO_MANY_ITEMS)
+		else if (state == STATE_TOO_MANY_ITEMS)
 		{
 			log.debug("STATE_TOO_MANY_ITEMS");
+			wm = null;
 		}
 
-		if (state == STATE_EMPTY)
+		else if (state == STATE_EMPTY)
 		{
 			log.debug("STATE_EMPTY");
 			currentItem = null;
