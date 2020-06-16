@@ -6,7 +6,7 @@ The following items can be toggled in the configuration menu.
 * 1 cooked salmon or gnomeball
 * 4 pie dishes or ground bat bones
 * 9 brass keys or amulets of magic
-* 10 Al kharid flyers or rocks (elemental)
+* 10 Oak roots, Al kharid flyers, or rocks (elemental)
 ## Instructions
 1. Deposit all items, including equipped items. Coins can be left in your inventory.
 2. Withdraw the item you want to weigh.

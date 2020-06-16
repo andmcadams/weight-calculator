@@ -11,6 +11,7 @@ public interface WeightCalcConfig extends Config
 	String TENTH_KG_KEYNAME = "0.100";
 	String HUNDREDTH_KG_KEYNAME = "0.010";
 	String THOUSANDTH_KG_KEYNAME = "0.001";
+	String SHOW_WEIGHTS_TOGGLE_KEYNAME = "showWeightsToggle";
 
 	@ConfigItem(keyName = HALF_KG_KEYNAME, name = "0.500 kg", description = "Weighing item to use for 0.500 kg")
 	default WeightCalcEnum.HalfKg halfKgConfig()
@@ -33,6 +34,9 @@ public interface WeightCalcConfig extends Config
 	@ConfigItem(keyName = THOUSANDTH_KG_KEYNAME, name = "0.001 kg", description = "Weighing item to use for 0.001 kg")
 	default WeightCalcEnum.ThousandthKg thousandthKgConfig()
 	{
-		return WeightCalcEnum.ThousandthKg.AL_KHARID_FLYER;
+		return WeightCalcEnum.ThousandthKg.OAK_ROOTS;
 	}
+
+	@ConfigItem(keyName = SHOW_WEIGHTS_TOGGLE_KEYNAME, name = "Visible weight range", description = "Display the possible range of weights as items are weighed")
+	default boolean showWeightsRange() { return false; }
 }
