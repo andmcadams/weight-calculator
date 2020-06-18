@@ -59,10 +59,11 @@ public class WeightCalcPlugin extends Plugin
 	// Constants for determining the player state
 	public static final int STATE_EQUIPPED = 0;
 	public static final int STATE_EMPTY = 1;
-	public static final int STATE_READY = 2;
-	public static final int STATE_TOO_MANY_ITEMS = 3;
-	public static final int STATE_WEIGHING = 4;
-	public static final int STATE_UNKNOWN = 5;
+	public static final int STATE_ITEM_UNKNOWN = 2;
+	public static final int STATE_READY = 3;
+	public static final int STATE_TOO_MANY_ITEMS = 4;
+	public static final int STATE_WEIGHING = 5;
+	public static final int STATE_UNKNOWN = 6;
 
 	// The client produced weight while the player is only holding the item to weigh.
 	// Note that due to the way the client displays weight, this will always be an int.
@@ -142,7 +143,7 @@ public class WeightCalcPlugin extends Plugin
 	@Subscribe
 	public void onItemContainerChanged(ItemContainerChanged event)
 	{
-		if (InventoryID.INVENTORY.getId() != event.getContainerId() && InventoryID.EQUIPMENT.getId() != event.getContainerId())
+		if (InventoryID.INVENTORY.getId() != event.getContainerId())
 		{
 			return;
 		}
@@ -157,25 +158,24 @@ public class WeightCalcPlugin extends Plugin
 
 		final Item[] items = itemContainer.getItems();
 		state = determineState(itemContainer, equipmentContainer);
-		if (state == STATE_UNKNOWN)
-		{
-			log.debug("STATE UNKNOWN");
-			return;
-		}
+
 		if (state == STATE_EQUIPPED)
 		{
 			log.debug("STATE_EQUIPPED");
-			return;
+			currentItem = null;
+			wm = null;
 		}
 
-		if (state == STATE_TOO_MANY_ITEMS)
-		{
-			log.debug("STATE_TOO_MANY_ITEMS");
-		}
-
-		if (state == STATE_EMPTY)
+		else if (state == STATE_EMPTY)
 		{
 			log.debug("STATE_EMPTY");
+			currentItem = null;
+			wm = null;
+		}
+
+		else if (state == STATE_ITEM_UNKNOWN)
+		{
+			log.debug("STATE_ITEM_UNKNOWN");
 			currentItem = null;
 			wm = null;
 		}
@@ -190,6 +190,12 @@ public class WeightCalcPlugin extends Plugin
 			minWeight = new BigDecimal("0");
 			maxWeight = minWeight.add(BigDecimal.ONE);
 			wm = solve();
+		}
+
+		else if (state == STATE_TOO_MANY_ITEMS)
+		{
+			log.debug("STATE_TOO_MANY_ITEMS");
+			wm = null;
 		}
 
 		else if (state == STATE_WEIGHING)
@@ -227,6 +233,13 @@ public class WeightCalcPlugin extends Plugin
 				wm = solve();
 			}
 		}
+
+		else if (state == STATE_UNKNOWN)
+		{
+			log.debug("STATE UNKNOWN");
+			currentItem = null;
+			wm = null;
+		}
 	}
 
 	private BigDecimal getExtraWeight()
@@ -254,10 +267,11 @@ public class WeightCalcPlugin extends Plugin
 			}
 		}
 
-		// If the inventory container exists, we have five possible states that we could be in.
-		// STATE_EMPTY - The player's inventory is empty or the item being weighed was removed from the inventory.
+		// If the inventory container exists, we have six possible states that we could be in.
+		// STATE_EMPTY - The player's inventory is empty.
 		// STATE_READY - The player's inventory contains a single item, but this is not the item that player was
 		// 				previously weighing.
+		// STATE_ITEM_UNKNOWN - The player's inventory no longer contains an item to weigh.
 		// STATE_TOO_MANY_ITEMS - The player's inventory contains more than one non-weighing item.
 		// STATE_WEIGHING - The player's inventory contains only the item in the process of being weighed and
 		// 				weighing items.
@@ -270,9 +284,14 @@ public class WeightCalcPlugin extends Plugin
 			}
 			else if (realSize(items) == 1 && (currentItem == null || getItemToWeigh(items).getId() != currentItem.getId()))
 			{
-				return STATE_READY;
+				int id = getItemToWeigh(items).getId();
+				if (!(id == HALF_KG_ID || id == TENTH_KG_ID || id == HUNDREDTH_KG_ID || id == THOUSANDTH_KG_ID))
+				{
+					return STATE_READY;
+				}
 			}
-			else if (realSize(items) >= 1)
+
+			if (realSize(items) >= 1)
 			{
 				// We could either be in the weighing state or the too many items state depending on the inventory.
 				int nonWeighingItemCount = 0;
@@ -312,13 +331,13 @@ public class WeightCalcPlugin extends Plugin
 						itemWeighedInInventory = true;
 					}
 				}
-				if (!itemWeighedInInventory)
-				{
-					return STATE_EMPTY;
-				}
-				else if (nonWeighingItemCount > 1)
+				if (nonWeighingItemCount > 1)
 				{
 					return STATE_TOO_MANY_ITEMS;
+				}
+				else if (!itemWeighedInInventory)
+				{
+					return STATE_ITEM_UNKNOWN;
 				}
 				else
 				{

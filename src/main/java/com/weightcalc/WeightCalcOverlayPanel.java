@@ -30,6 +30,11 @@ public class WeightCalcOverlayPanel extends OverlayPanel
 		setLayer(OverlayLayer.ALWAYS_ON_TOP);
 	}
 
+	private void addTextToOverlayPanel(String text)
+	{
+		panelComponent.getChildren().add(LineComponent.builder().left(text).build());
+	}
+
 	@Override
 	public Dimension render(Graphics2D graphics)
 	{
@@ -42,43 +47,48 @@ public class WeightCalcOverlayPanel extends OverlayPanel
 
 		if (state == WeightCalcPlugin.STATE_EQUIPPED)
 		{
-			panelComponent.getChildren().add(LineComponent.builder().left("Remove all equipped items.").build());
-		}
-		else if (state == WeightCalcPlugin.STATE_TOO_MANY_ITEMS)
-		{
-			panelComponent.getChildren().add(LineComponent.builder().left("Too many non-weighing items in inventory.").build());
+			addTextToOverlayPanel("Deposit all equipped items and items in your inventory.");
 		}
 		else if (state == WeightCalcPlugin.STATE_EMPTY)
 		{
-			panelComponent.getChildren().add(LineComponent.builder().left("Remove all items from your inventory and then add the item to weigh to your inventory.").build());
+			addTextToOverlayPanel("Add the item to weigh to your inventory.");
+		}
+		else if (state == WeightCalcPlugin.STATE_ITEM_UNKNOWN)
+		{
+			addTextToOverlayPanel("Empty your inventory.");
+		}
+		else if (state == WeightCalcPlugin.STATE_TOO_MANY_ITEMS)
+		{
+			addTextToOverlayPanel("Remove extra non-weighing items from your inventory.");
 		}
 		else if (state == WeightCalcPlugin.STATE_UNKNOWN)
 		{
-			panelComponent.getChildren().add(LineComponent.builder().left("Please restart the plugin and try again.").build());
+			addTextToOverlayPanel("Please restart the plugin and try again.");
 		}
 		else
 		{
 			Item currentItem = WeightCalcPlugin.getCurrentItem();
 			ItemComposition item = itemManager.getItemComposition(currentItem.getId());
-			panelComponent.getChildren().add(LineComponent.builder().left("Weighing: " + item.getName()).build());
-			panelComponent.getChildren().add(LineComponent.builder().left("").build());
+
+			addTextToOverlayPanel("Weighing: " + item.getName());
+			addTextToOverlayPanel("");
+
 			if (WeightCalcPlugin.getWm() != null)
 			{
 				ItemComposition weighingItem = itemManager.getItemComposition(WeightCalcPlugin.getWm().getItemId());
 				String message = (WeightCalcPlugin.getWm().isWithdrawMore() ? "Withdraw " : "Deposit ") + weighingItem.getName();
-				panelComponent.getChildren().add(LineComponent.builder().left(message).build());
+				addTextToOverlayPanel(message);
 			}
 			if (minWeight.compareTo(maxWeight) == 0)
 			{
-				panelComponent.getChildren().add(LineComponent.builder().left("Final weight: " + (BigDecimal.ONE.subtract(maxWeight).add(aloneWeight).toString())).build());
+				addTextToOverlayPanel("Final weight: " + (BigDecimal.ONE.subtract(maxWeight).add(aloneWeight).toString()));
 			}
 			// Might want to add this as a toggle for debugging.
 			else if (config.showWeightsRange())
 			{
-				panelComponent.getChildren().add(LineComponent.builder().left("Possible weights: " + (BigDecimal.ONE.subtract(maxWeight).add(aloneWeight)) + " - " + (BigDecimal.ONE.subtract(minWeight).add(aloneWeight))).build());
+				addTextToOverlayPanel("Possible weights: " + (BigDecimal.ONE.subtract(maxWeight).add(aloneWeight)) + " - " + (BigDecimal.ONE.subtract(minWeight).add(aloneWeight)));
 			}
 		}
-
 
 		return super.render(graphics);
 	}
