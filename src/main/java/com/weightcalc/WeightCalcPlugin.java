@@ -284,9 +284,14 @@ public class WeightCalcPlugin extends Plugin
 			}
 			else if (realSize(items) == 1 && (currentItem == null || getItemToWeigh(items).getId() != currentItem.getId()))
 			{
-				return STATE_READY;
+				int id = getItemToWeigh(items).getId();
+				if (!(id == HALF_KG_ID || id == TENTH_KG_ID || id == HUNDREDTH_KG_ID || id == THOUSANDTH_KG_ID))
+				{
+					return STATE_READY;
+				}
 			}
-			else if (realSize(items) >= 1)
+
+			if (realSize(items) >= 1)
 			{
 				// We could either be in the weighing state or the too many items state depending on the inventory.
 				int nonWeighingItemCount = 0;
