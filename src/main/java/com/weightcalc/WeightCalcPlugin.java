@@ -142,7 +142,7 @@ public class WeightCalcPlugin extends Plugin
 	@Subscribe
 	public void onItemContainerChanged(ItemContainerChanged event)
 	{
-		if (InventoryID.INVENTORY.getId() != event.getContainerId() && InventoryID.EQUIPMENT.getId() != event.getContainerId())
+		if (InventoryID.INVENTORY.getId() != event.getContainerId())
 		{
 			return;
 		}
@@ -160,17 +160,21 @@ public class WeightCalcPlugin extends Plugin
 		if (state == STATE_UNKNOWN)
 		{
 			log.debug("STATE UNKNOWN");
+			currentItem = null;
+			wm = null;
 		}
 
 		else if (state == STATE_EQUIPPED)
 		{
 			log.debug("STATE_EQUIPPED");
+			currentItem = null;
 			wm = null;
 		}
 
 		else if (state == STATE_TOO_MANY_ITEMS)
 		{
 			log.debug("STATE_TOO_MANY_ITEMS");
+			currentItem = null;
 			wm = null;
 		}
 
