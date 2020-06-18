@@ -42,15 +42,19 @@ public class WeightCalcOverlayPanel extends OverlayPanel
 
 		if (state == WeightCalcPlugin.STATE_EQUIPPED)
 		{
-			panelComponent.getChildren().add(LineComponent.builder().left("Remove and deposit all equipped items and deposit all items in your inventory.").build());
-		}
-		else if (state == WeightCalcPlugin.STATE_TOO_MANY_ITEMS)
-		{
-			panelComponent.getChildren().add(LineComponent.builder().left("Too many non-weighing items in inventory.").build());
+			panelComponent.getChildren().add(LineComponent.builder().left("Deposit all equipped items and items in your inventory.").build());
 		}
 		else if (state == WeightCalcPlugin.STATE_EMPTY)
 		{
 			panelComponent.getChildren().add(LineComponent.builder().left("Add the item to weigh to your inventory.").build());
+		}
+		else if (state == WeightCalcPlugin.STATE_ITEM_UNKNOWN)
+		{
+			panelComponent.getChildren().add(LineComponent.builder().left("Empty your inventory.").build());
+		}
+		else if (state == WeightCalcPlugin.STATE_TOO_MANY_ITEMS)
+		{
+			panelComponent.getChildren().add(LineComponent.builder().left("Too many non-weighing items in inventory.").build());
 		}
 		else if (state == WeightCalcPlugin.STATE_UNKNOWN)
 		{
