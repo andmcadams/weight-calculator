@@ -42,7 +42,7 @@ public class WeightCalcOverlayPanel extends OverlayPanel
 
 		if (state == WeightCalcPlugin.STATE_EQUIPPED)
 		{
-			panelComponent.getChildren().add(LineComponent.builder().left("Remove all equipped items.").build());
+			panelComponent.getChildren().add(LineComponent.builder().left("Remove and deposit all equipped items and deposit all items in your inventory.").build());
 		}
 		else if (state == WeightCalcPlugin.STATE_TOO_MANY_ITEMS)
 		{
@@ -50,7 +50,7 @@ public class WeightCalcOverlayPanel extends OverlayPanel
 		}
 		else if (state == WeightCalcPlugin.STATE_EMPTY)
 		{
-			panelComponent.getChildren().add(LineComponent.builder().left("Remove all items from your inventory and then add the item to weigh to your inventory.").build());
+			panelComponent.getChildren().add(LineComponent.builder().left("Add the item to weigh to your inventory.").build());
 		}
 		else if (state == WeightCalcPlugin.STATE_UNKNOWN)
 		{
