@@ -59,7 +59,7 @@ public class WeightCalcOverlayPanel extends OverlayPanel
 		}
 		else if (state == WeightCalcPlugin.STATE_TOO_MANY_ITEMS)
 		{
-			addTextToOverlayPanel("Too many non-weighing items in inventory.");
+			addTextToOverlayPanel("Remove extra non-weighing items from your inventory.");
 		}
 		else if (state == WeightCalcPlugin.STATE_UNKNOWN)
 		{
