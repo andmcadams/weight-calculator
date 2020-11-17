@@ -2,6 +2,7 @@ package com.weightcalc;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.runelite.api.ItemContainer;
 import net.runelite.api.ItemID;
 
 public class WeightCalcEnum
@@ -62,7 +63,8 @@ public class WeightCalcEnum
 	{
 		ROCK(ItemID.ROCK_1480),
 		AL_KHARID_FLYER(ItemID.AL_KHARID_FLYER),
-		OAK_ROOTS(ItemID.OAK_ROOTS);
+		OAK_ROOTS(ItemID.OAK_ROOTS),
+		FISH_PIE(ItemID.FISH_PIE);
 
 		@Getter
 		@Setter
