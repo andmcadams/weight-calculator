@@ -2,7 +2,6 @@ package com.weightcalc;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.runelite.api.ItemContainer;
 import net.runelite.api.ItemID;
 
 public class WeightCalcEnum
